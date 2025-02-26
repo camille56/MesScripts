@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calculateur crypto!{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+
+
+        <h1>Résumé des transactions</h1>
+        {% if not traitementFichier %}
+            <p>Vous pouvez uploader un fichier .CSV provenant du site kraken pour que le script analyse les différentes transactions</p>
+        {% endif %}
+        <div class="centrale card">
+            <form method="post" enctype="multipart/form-data">
+                <label for="fileUpload" class="upload">Choisir un fichier</label>
+                <input type="file" name="fichierCSV" id="fileUpload" required>
+                <span id="fileName">Aucun fichier sélectionné</span>
+                <button class="button" type="submit">Envoyer</button>
+            </form>
+        </div>
+
+        {% if traitementFichier %}
+            <div class="card">
+                <div>
+                    <h2>Date de la première transaction</h2>
+                    <p>{{ premiereTransaction|date }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div>
+                    <h2>Date de la dernière transaction</h2>
+                    <p>{{ derniereTransaction|date }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div>
+                    <h2>total investi</h2>
+                    <p>{{ totalInvesti }} €</p>
+                </div>
+            </div>
+            <div class="card">
+                <div>
+                    <h2>Nombre total de transactions pour investissement</h2>
+                    <p>{{ nombreTransactionInvestissement }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div>
+                    <h2>Nombre total de transactions pour désinvestissement</h2>
+                    <p>{{ nombreTransactionDesinvestissement }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div>
+                    <h2>total des ventes</h2>
+                    <p>{{ totalVendu }} €</p>
+                </div>
+            </div>
+            <div class="card">
+                <div>
+                    <h2>bénéfice</h2>
+                    <p>{{ benefice }} €</p>
+                </div>
+            </div>
+
+        {% endif %}
+    </div>
+
+{% endblock %}
