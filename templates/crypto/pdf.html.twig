@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<h1>Résumé Des transactions crypto :</h1>
+{% if data %}
+    <h3>Total investi :</h3>
+    <p>{{ data.totalInvesti }} €</p>
+
+    <h3>Total vendu :</h3>
+    <p>{{ data.totalVendu }} €</p>
+
+    <h3>Les bénéfices :</h3>
+    <p>{{ data.benefice }} €</p>
+
+    <h3>Imposition à prévoir :</h3>
+    <p>{{ data.imposition }} €</p>
+{% endif %}
+</body>
+</html>

@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Service\PdfGeneratorService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 
@@ -17,7 +19,7 @@ final class CryptoController extends AbstractController
      * @throws \Exception
      */
     #[Route('', name: 'index')]
-    public function index(Request $request): Response
+    public function index(Request $request, SessionInterface $session): Response
     {
         $datePremiereTransaction = null;
         $dateDerniereTransaction = null;
@@ -122,6 +124,16 @@ final class CryptoController extends AbstractController
 
                     }
 
+                    //Stockage des données en session pour la génération du PDF.
+                    $pdfData=[
+                        'totalInvesti'=>$totalInvesti,
+                        'totalVendu'=>$totalVendu,
+                        'benefice'=>$benefice,
+                        'imposition'=>$imposition,
+                    ];
+
+                    $session->set('pdfData',$pdfData);
+
                     fclose($stream);
                 } else {
                     throw new \Exception("Impossible d'ouvrir le fichier CSV.");
@@ -142,6 +154,45 @@ final class CryptoController extends AbstractController
             'cryptos' => $cryptos,
             'imposition' => $imposition,
         ]);
+    }
+
+    #[Route('/output-pdf', name: 'app_output_pdf')]
+    public function outputPdf(PdfGeneratorService $pdfGeneratorService):Response
+    {
+        //Création du contenu pdf avec la fonction getPdf
+//        $contenu= $pdfGeneratorService->getPdf('<h1>Hello World!</h1>');
+
+        //Créations du html avec renderview à partir du templates pdf.html.twig
+        $html=$this->renderView('crypto/pdf.html.twig', []);
+        $contenu=$pdfGeneratorService->getPdf($html);
+
+
+
+        return new Response($contenu, Response::HTTP_OK,[
+            'Content-Type' => 'application/pdf',
+        ]);
+    }
+
+    /**
+     * Permet le téléchargement du PDF.
+     * @param PdfGeneratorService $pdfGeneratorService
+     * @return Response
+     */
+    #[Route('/stream-pdf', name: 'app_stream_pdf')]
+    public function streamPdf(PdfGeneratorService $pdfGeneratorService, SessionInterface $session):Response
+    {
+        $data= $session->get('pdfData');
+
+        if (empty($data)){
+            $this->addFlash('danger', 'Aucune donnée trouvée.');
+            return $this->redirectToRoute('index');
+        }
+
+        $session->remove('pdfData');
+
+        $html=$this->renderView('crypto/pdf.html.twig', ['data'=>$data]);
+
+        return $pdfGeneratorService->getStreamResponse($html,'Détail_transaction_kraken.pdf');
     }
 
 }
