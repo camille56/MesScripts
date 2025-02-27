@@ -29,6 +29,7 @@ final class CryptoController extends AbstractController
         $cryptos = [];
         $traitementFichier=false;
         $tauxImpositionCrypto = 0.3;
+        $imposition=0;
 
         if ($request->isMethod('POST')) {
 
@@ -139,6 +140,7 @@ final class CryptoController extends AbstractController
             'nombreTransactionDesinvestissement' => $nombreTransationDesinvestissement,
             'benefice' => $benefice,
             'cryptos' => $cryptos,
+            'imposition' => $imposition,
         ]);
     }
 

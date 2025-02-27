@@ -64,6 +64,22 @@
                 </div>
             </div>
 
+            <div class="card">
+                <div>
+                    <h2>Achat total pour chaque crypto</h2>
+                    {% for crypto, data in cryptos %}
+                        <div>
+                            <h3>{{ crypto }}</h3>
+                            <p>{{ data.totalInvesti }} €</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card">
+                <h2>Imposition à prévoir</h2>
+                <p>{{ imposition }} €</p>
+            </div>
+
         {% endif %}
     </div>
 
